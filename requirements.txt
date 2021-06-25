@@ -1,7 +1,7 @@
 numpy 
 opencv-python
 pytesseract 
-speech_recognition 
-gtts
+SpeechRecognition
+gTTS
 chatterbot
 python-telegram-bot
