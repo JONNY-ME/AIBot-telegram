@@ -1,0 +1,7 @@
+numpy 
+opencv-python
+pytesseract 
+speech_recognition 
+gtts
+chatterbot
+python-telegram-bot
