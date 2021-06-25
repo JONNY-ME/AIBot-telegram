@@ -237,7 +237,7 @@ def chatting(update, context):
 def main() -> None:
     """Run the bot."""
     # Create the Updater and pass it your bot's token.
-    updater = Updater(keys.API_KEY2)
+    updater = Updater(keys.API_KEY)
 
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
