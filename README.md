@@ -1,4 +1,7 @@
 # AIBot-telegram
 A python telegram bot used to do some AI stuffs.
 
-Add you API key to the file named constants.py and then you can run the bot.
+- Clone the file to your local directory
+- Do pip install -r requirements.txt 
+- Add you API key to the file named constants.py 
+- run the main.py file
