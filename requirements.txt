@@ -1,7 +1,8 @@
+python-telegram-bot
 numpy 
 opencv-python
 pytesseract 
 SpeechRecognition
 gTTS
 chatterbot
-python-telegram-bot
+chatterbot-corpus
