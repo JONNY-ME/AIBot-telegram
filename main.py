@@ -24,7 +24,7 @@ import os
 # print(sr.text_from_audio('abc.wav'))
 
 # au = CreateAudio()
-# au.text_to_audio('that contain at least half as many vowels as consonants wey english afer belach 😂 Ene chirash y tesasto new vowel aydelechim bye esuan awtche emoklalew')
+# au.text_to_audio('that contain at least half as many vowels as consonants.')
 
 
 
@@ -365,7 +365,7 @@ def main() -> None:
         },
 
         fallbacks=[
-            MessageHandler(Filters.regex("^(start|done|cancel)$"), start),
+            MessageHandler(Filters.text, start),
         ],
     )
 
