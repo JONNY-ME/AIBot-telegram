@@ -4,6 +4,7 @@ import constants as keys
 from telegram.ext import *
 from telegram import * 
 import os
+import uuid
 
 
 # img = ImageClassification('Inception')
@@ -73,6 +74,12 @@ def start(update, context) -> int:
     )
     return _CHOOSING
 
+def startagain(update, context) -> int:
+    update.message.reply_text(
+        "Hello Again please press /start to continue",
+    )
+    return _CHOOSING
+
 def image(update, context) -> int:
     update.message.reply_text(
         "choose either image to text or text to image or back to return to main",
@@ -111,12 +118,15 @@ def uploadimage(update, context):
     try:
         has_photo = len(update.message.photo) if update.message.photo else False
         bot = context.bot
+        # print(update.message.photo[0])
+        # fil = bot.getFile(update.message.photo[0]['file_id'])
+        # print(dir(fil))
         file_ = [
             [fil["file_size"], fil["file_id"], fil["file_unique_id"]]
             for fil in update.message.photo
         ]
         file_.sort()
-        file_name = 'trash/temp.png'
+        file_name = f'trash/{str(uuid.uuid1())}.png'
         download_file = bot.getFile(file_[-1][1])
         download_file.download(custom_path=file_name)
         update.message.reply_text("succesfully uploaded!")
@@ -148,10 +158,10 @@ def textonimage(update, context):
     chat_id = update.message.chat_id
     try:
         # saves the image with name temp.png in the current directory
-        crimg.draw('black', 1200, 1200, text=text)
+        file_path = crimg.draw('black', 1200, 1200, text=text)
         update.message.reply_text('here you go')
         context.bot.send_photo(
-            chat_id=chat_id, photo=open('trash/temp.png', 'rb'), 
+            chat_id=chat_id, photo=open(file_path, 'rb'), 
             reply_markup=markup2
             )
         
@@ -176,7 +186,7 @@ def uploadaudio(update, context):
     try:
         download_file = update.message.audio.get_file()
         file_name = update.message.audio.file_name
-        new_filename = 'trash/temp.'+file_name.split('.')[-1]
+        new_filename = f'trash/{str(uuid.uuid1())}.'+file_name.split('.')[-1]
         # print(dir(update.message.audio))
         download_file.download(custom_path=new_filename)
         update.message.reply_text("succesfully uploaded!")
@@ -209,10 +219,10 @@ def textonaudio(update, context):
     chat_id = update.message.chat_id
     try:
         # saves the audio file named 'temp.ext' in current directory
-        au.text_to_audio(text)
+        file_path = au.text_to_audio(text)
         update.message.reply_text("here you go", reply_markup=markup3)
         context.bot.send_audio(
-            chat_id=chat_id, audio=open('trash/temp.mp3', 'rb'),
+            chat_id=chat_id, audio=open(file_path, 'rb'),
             reply_markup=markup3)
             
         return _AUDIO
@@ -242,7 +252,7 @@ def main() -> None:
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start)],
+        entry_points=[MessageHandler(Filters.text, start)],
         states={
             _CHOOSING : [
                 MessageHandler(
@@ -371,6 +381,7 @@ def main() -> None:
 
     # dispatcher.add_handler(CommandHandler('start', start))
     dispatcher.add_handler(conv_handler)
+    # dispatcher.add_handler(MessageHandler(Filters.text, startagain))
 
     # Start the Bot
     updater.start_polling()
