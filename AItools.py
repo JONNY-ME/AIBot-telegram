@@ -1,6 +1,7 @@
 import os
 import warnings
 import random
+import uuid
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 warnings.filterwarnings('ignore')
 
@@ -110,7 +111,10 @@ class CreateImage():
                 d.text((10, 10), text, font=fnt, fill=text_col)
             except:
                 d.text((10, 10), text, font=fnt,  fill='white')
-        img.save('trash/temp.png')    
+        file_path = f"trash/{str(uuid.uuid1())}.png"
+        img.save(file_path
+        )    
+        return file_path
 
         # mcolors.to_rgb(text_col)
         # cv2.imshow('image',self.img)
@@ -155,7 +159,9 @@ class CreateAudio:
     
     def text_to_audio(self, text, lang='en') -> None:
         myobj = gTTS(text=text, lang=lang, slow=False)
-        myobj.save("trash/temp.mp3")
+        ran_path =f"trash/{str(uuid.uuid1())}.mp3"
+        myobj.save(ran_path)
+        return ran_path
 
     
 class ChatBott:
@@ -168,4 +174,3 @@ class ChatBott:
             database_uri='sqlite:///db.sqlite3'
         )
         return chatbot
-
