@@ -111,9 +111,10 @@ class CreateImage():
                 d.text((10, 10), text, font=fnt, fill=text_col)
             except:
                 d.text((10, 10), text, font=fnt,  fill='white')
-        file_path = f"trash/{str(uuid.uuid1())}.png"
-        img.save(file_path
-        )    
+        uuud = str(uuid.uuid1())
+        os.mkdir(f'trash/{uuud}')
+        file_path = f"trash/{uuud}/temp.png"
+        img.save(file_path)    
         return file_path
 
         # mcolors.to_rgb(text_col)
@@ -132,22 +133,27 @@ class SpeechRecognition:
 
     def text_from_audio(self, audio_dir:str) -> str:
         r = sr.Recognizer()
+        converted = False
         if audio_dir.split('.')[-1] != 'wav':
-            with open(audio_dir, "rb") as inp_f:
-                data = inp_f.read()
-                new_audio_dir = audio_dir.split('.')[0]+'.wav'
-                with wave.open(new_audio_dir, "wb") as out_f:
-                    out_f.setnchannels(1)
-                    out_f.setsampwidth(2) # number of bytes
-                    out_f.setframerate(44100)
-                    out_f.writeframesraw(data)
-                audio_dir = new_audio_dir
-    
+            os.system(f'audioconvert convert {audio_dir[:-9]}/ {audio_dir[:-9]}/ --output-format .wav')
+            converted = True
+            # with open(audio_dir, "rb") as inp_f:
+            #     data = inp_f.read()
+            #     new_audio_dir = audio_dir.split('.')[0]+'.wav'
+            #     with wave.open(new_audio_dir, "wb") as out_f:
+            #         out_f.setnchannels(1)
+            #         out_f.setsampwidth(2) # number of bytes
+            #         out_f.setframerate(44100)
+            #         out_f.writeframesraw(data)
+            #     audio_dir = new_audio_dir
+        audio_dir = audio_dir[:-4]+'.wav'
         with sr.AudioFile(audio_dir) as source:
             # listen for the data (load audio to memory)
             audio_data = r.record(source)
             # recognize (convert from speech to text)
             text = r.recognize_google(audio_data)
+            if converted:
+                 os.system(f'rm -rf {audio_dir}')
             return text
 
 
@@ -159,7 +165,9 @@ class CreateAudio:
     
     def text_to_audio(self, text, lang='en') -> None:
         myobj = gTTS(text=text, lang=lang, slow=False)
-        ran_path =f"trash/{str(uuid.uuid1())}.mp3"
+        uuud = str(uuid.uuid1())
+        os.mkdir(f'trash/{uuud}')
+        ran_path =f"trash/{uuud}/temp.mp3"
         myobj.save(ran_path)
         return ran_path
 
@@ -174,3 +182,4 @@ class ChatBott:
             database_uri='sqlite:///db.sqlite3'
         )
         return chatbot
+
