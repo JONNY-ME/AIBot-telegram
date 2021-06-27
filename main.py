@@ -115,6 +115,9 @@ def image_to_text(update, context):
     return _IMAGETOTEXT
 
 def uploadimage(update, context):
+    uploaded = False
+    uuud = str(uuid.uuid1())
+    os.mkdir(f'trash/{uuud}')
     try:
         has_photo = len(update.message.photo) if update.message.photo else False
         bot = context.bot
@@ -126,18 +129,23 @@ def uploadimage(update, context):
             for fil in update.message.photo
         ]
         file_.sort()
-        file_name = f'trash/{str(uuid.uuid1())}.png'
+        file_name = f'trash/{uuud}/temp.png'
         download_file = bot.getFile(file_[-1][1])
         download_file.download(custom_path=file_name)
         update.message.reply_text("succesfully uploaded!")
+        uploaded = True
         text = ocr.text_from_image(file_name)
+        os.system(f'rm -rf trash/{uuud}')
         update.message.reply_text(
             "text extracted from the image:\n"+text, 
             reply_markup=markup2
             )
 
         return _IMAGE
-    except:
+    except Exception as e:
+        print(e)
+        if uploaded:
+            os.system(f'rm -rf trash/{uuud}')
         update.message.reply_text(
             "there was an error please send me the photo again",
             reply_markup=markup4
@@ -164,10 +172,11 @@ def textonimage(update, context):
             chat_id=chat_id, photo=open(file_path, 'rb'), 
             reply_markup=markup2
             )
-        
+        os.system(f'rm -rf {file_path[:-9]}')
         return _IMAGE
 
-    except:
+    except Exception as e:
+        print(e)
         update.message.reply_text(
             'an error has occured please send me the text again',
             )
@@ -183,15 +192,19 @@ def audio_to_text(update, context):
     return  _AUDIOTOTEXT
 
 def uploadaudio(update, context):
+    uploaded = False
+    uuud = str(uuid.uuid1())
+    os.mkdir(f'trash/{uuud}')
     try:
         download_file = update.message.audio.get_file()
         file_name = update.message.audio.file_name
-        new_filename = f'trash/{str(uuid.uuid1())}.'+file_name.split('.')[-1]
+        new_filename = f'trash/{uuud}/temp.'+file_name.split('.')[-1]
         # print(dir(update.message.audio))
         download_file.download(custom_path=new_filename)
         update.message.reply_text("succesfully uploaded!")
-
+        uploaded = True
         text = sr.text_from_audio(new_filename)
+        os.system(f'rm -rf trash/{uuud}')
         update.message.reply_text(
             "text extracted from the audio file\n"+text, 
             reply_markup=markup3
@@ -199,7 +212,10 @@ def uploadaudio(update, context):
 
         return _AUDIO
 
-    except:
+    except Exception as e:
+        print(e)
+        if uploaded:
+            os.system(f'rm -rf trash/{uuud}')
         update.message.reply_text(
             "there was an error please send me the audio file again", 
             reply_markup=markup4
@@ -224,10 +240,11 @@ def textonaudio(update, context):
         context.bot.send_audio(
             chat_id=chat_id, audio=open(file_path, 'rb'),
             reply_markup=markup3)
-            
+        os.system(f'rm -rf {file_path[:-9]}')
         return _AUDIO
 
-    except:
+    except Exception as e:
+        print(e)
         update.message.reply_text(
             "an error has occured please send me the text again", 
             reply_markup=markup3)
